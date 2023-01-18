@@ -4,26 +4,50 @@ import mjolnir from '../../resources/img/mjolnir.png';
 import { Component } from 'react';
 import MarvelService from '../../services/MarvelService';
 
+
+
+
+
+
 class RandomChar extends Component {
+
+    constructor(props) {
+        super(props)
+        this.updateChar()
+    }
 
     state = {
         name:null,
         description:null,
         homepage:null,
-        wiki:null
+        wiki:null,
+        thumbnail:null
     }
 
+    marvelService = new MarvelService()
 
+    updateChar = () => {
+        const id = Math.floor(Math.random() * Math.max(1011400 - 1011000) + 1011000)
+        this.marvelService
+            .getCharacter(id)
+            .then(res=>this.setState(res))
+            
+    }
 
     render() {
+
+        
+        
+        const {name,description,homepage,wiki,thumbnail} = this.state
         return (
+
             <div className="randomchar">
                 <div className="randomchar__block">
-                    <img src={thor} alt="Random character" className="randomchar__img"/>
+                    <img src={thumbnail} alt="Random character" className="randomchar__img"/>
                     <div className="randomchar__info">
-                        <p className="randomchar__name">Thor</p>
+                        <p className="randomchar__name">{name}</p>
                         <p className="randomchar__descr">
-                            As the Norse God of thunder and lightning, Thor wields one of the greatest weapons ever made, the enchanted hammer Mjolnir. While others have described Thor as an over-muscled, oafish imbecile, he's quite smart and compassionate...
+                            {description}
                         </p>
                         <div className="randomchar__btns">
                             <a href="#" className="button button__main">
@@ -44,7 +68,7 @@ class RandomChar extends Component {
                         Or choose another one
                     </p>
                     <button className="button button__main">
-                        <div className="inner">try it</div>
+                        <div onClick={this.updateChar} className="inner">try it</div>
                     </button>
                     <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
                 </div>
