@@ -17,28 +17,42 @@ class RandomChar extends Component {
     }
 
     state = {
-        name:null,
-        description:null,
-        homepage:null,
-        wiki:null,
-        thumbnail:null
+        char:{}
     }
 
     marvelService = new MarvelService()
+
+    onCharLoaded = (char) => {
+    if(!char.description) {char.description = 'Sorry! No info about this character.'}
+    if (char.description.length) {
+        let about = char.description.split(' ')
+        console.log(about)
+        if(about.length>32) {
+            about = about.slice(0,about.length - 12)
+            about.push('...')
+            char.description = about.join(' ')
+        }
+
+    }
+
+
+    this.setState({char})
+
+    }
 
     updateChar = () => {
         const id = Math.floor(Math.random() * Math.max(1011400 - 1011000) + 1011000)
         this.marvelService
             .getCharacter(id)
-            .then(res=>this.setState(res))
+            .then(this.onCharLoaded)
             
     }
 
     render() {
 
-        
-        
-        const {name,description,homepage,wiki,thumbnail} = this.state
+        const {char:{name,description,homepage,wiki,thumbnail}} = this.state
+
+        console.log(description)
         return (
 
             <div className="randomchar">
