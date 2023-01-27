@@ -8,11 +8,7 @@ import ErrorMessage from '../errorMessage/ErrorMessage';
 
 
 class RandomChar extends Component {
-
-    constructor(props) {
-        super(props)
-        this.updateChar()
-    }
+    
 
     state = {
         char:{},
@@ -22,17 +18,28 @@ class RandomChar extends Component {
 
     marvelService = new MarvelService()
 
+    
+
+    componentDidMount() {
+
+        this.updateChar()
+     /*   const this.timerID = setInterval(this.updateChar,3000) */
+
+    }
+
+    /* componentWillUnmount(this.timerID) */
+
     onCharLoaded = (char) => {
+
     if(!char.description) {char.description = 'Sorry! No info about this character.'}
     if (char.description.length) {
-        let about = char.description.split(' ')
-        console.log(about)
-        if(about.length>32) {
-            about = about.slice(0,about.length - 12)
-            about.push('...')
-            char.description = about.join(' ')
-        }
-
+    let about = char.description.split(' ')
+    
+    if(about.length>32) {
+        about = about.slice(0,about.length - 12)
+        about.push('...')
+        char.description = about.join(' ')
+    }
     }
 
 
@@ -43,6 +50,7 @@ class RandomChar extends Component {
 
     }
 
+
     onError = () => {
         this.setState({
             loading:false,
@@ -50,7 +58,13 @@ class RandomChar extends Component {
         )
     }
 
+
     updateChar = () => {
+
+        this.setState({
+            loading:true
+        })
+
         const id = Math.floor(Math.random() * Math.max(1011400 - 1011000) + 1011000)
         this.marvelService
             .getCharacter(id)
@@ -58,19 +72,21 @@ class RandomChar extends Component {
             .catch(this.onError)
     }
 
+
     render() {
 
+        console.log(this.state.char)
         const {char,loading,error} = this.state
-
+        
         const errorMessage = error ? <ErrorMessage/> : null;
         const spinner = loading ? <Spinner/> : null;
         const content = !(loading || error) ? <View char = {char}/> : null
         return (
             
             <div className="randomchar">
-               {errorMessage}
-               {spinner}
-               {content}
+                {errorMessage}
+                {spinner}
+                {content}
                 <div className="randomchar__static">
                     <p className="randomchar__title">
                         Random character for today!<br/>
@@ -94,9 +110,24 @@ const View = ({char}) => {
 
     const {name,description,homepage,wiki,thumbnail} = char
 
+    let style = ''
+
+    const change = () => {
+        if (thumbnail === 
+            "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg" ) {
+    
+                style = 'contain'
+
+                return style
+    
+                
+            }
+    }
+    
+
     return (
         <div className="randomchar__block">
-            <img src={thumbnail} alt="Random character" className="randomchar__img"/>
+            <img src={thumbnail} style = {{objectFit:change()}} alt="Random character" className="randomchar__img"/>
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
                 <p className="randomchar__descr">
@@ -114,6 +145,6 @@ const View = ({char}) => {
         </div>
     )
 
-}
+    }
 
 export default RandomChar;
