@@ -35,7 +35,7 @@ class CharList extends Component {
 
     const {chars,loading} = this.state
 
-    const contentChars = chars.map((item,i)=>{
+    const contentChars = chars.map((item)=>{
     const {name,thumbnail} = item
     let style = ''
 
@@ -49,7 +49,7 @@ class CharList extends Component {
 
     return (
 
-        <li key={i} className="char__item">
+        <li  key={item.id} className="char__item">
         <img style = {{objectFit:change()}}  src={thumbnail} alt="abyss"/>
         <div className="char__name">{name}</div>
     </li>   

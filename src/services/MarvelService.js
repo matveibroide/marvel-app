@@ -30,7 +30,10 @@ getCharacter = async (id) => {
 }
 
 _transformCharacter = (char) => {
+
+    const id = char.id? char.id : null
     return {
+        id:id,
         name:char.name,
         description:char.description,
         homepage:char.urls[0].urls,
