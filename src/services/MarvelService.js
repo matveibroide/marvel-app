@@ -38,7 +38,8 @@ _transformCharacter = (char) => {
         description:char.description,
         homepage:char.urls[0].urls,
         wiki:char.urls[1].url,
-        thumbnail:char.thumbnail.path + '.' + char.thumbnail.extension
+        thumbnail:char.thumbnail.path + '.' + char.thumbnail.extension,
+        comics:char.comics.items
     }
 
 }

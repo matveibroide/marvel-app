@@ -3,13 +3,15 @@ import abyss from '../../resources/img/abyss.jpg';
 import { Component } from 'react';
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
+import ErrorMessage from '../errorMessage/ErrorMessage';
 
 class CharList extends Component {
 
 
     state = {
     chars: [],
-    loading:true
+    loading:true,
+    error:false
     }
 
 
@@ -21,8 +23,16 @@ class CharList extends Component {
         this.marvelService.getAllCharacters()
         .then(res=>this.setState({chars:res}))
         .then(this.onCharsLoaded)
+        .catch(this.onError)
         
     
+    }
+
+    onError = () => {
+        this.setState({
+            loading:false,
+            error:true}
+        )
     }
 
     onCharsLoaded = () => {
@@ -30,10 +40,11 @@ class CharList extends Component {
         this.setState({loading:false})
     }
 
-    
+
+
     render() {
 
-    const {chars,loading} = this.state
+    const {chars,loading,error} = this.state
 
     const contentChars = chars.map((item)=>{
     const {name,thumbnail} = item
@@ -49,7 +60,9 @@ class CharList extends Component {
 
     return (
 
-        <li  key={item.id} className="char__item">
+        <li  
+        onClick={()=>this.props.onCharSelected(item.id)}
+        key={item.id} className="char__item">
         <img style = {{objectFit:change()}}  src={thumbnail} alt="abyss"/>
         <div className="char__name">{name}</div>
     </li>   
@@ -58,18 +71,25 @@ class CharList extends Component {
 
    
 
-    const contentSpinners  = [...Array(8)].map((item,i)=>(
+    const contentSpinners  = loading ? [...Array(8)].map((item,i)=>(
         <Spinner key={i}/>
-    ));
+    )) : null
 
+    const contentErrors = error ? [...Array(8)].map((item,i)=>(
+        <ErrorMessage key={i}/>
+    )) : null
 
-    const contentToShow = loading ? contentSpinners : contentChars
+    
+    const contentToShow = !(loading || error) ? contentChars : null
+
        
  
     return (
 
         <div className="char__list">
             <ul  className="char__grid">
+            {contentErrors}
+            {contentSpinners}    
             {contentToShow}
             </ul>
             <button className="button button__main button__long">

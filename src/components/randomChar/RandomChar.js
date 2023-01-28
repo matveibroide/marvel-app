@@ -29,6 +29,8 @@ class RandomChar extends Component {
 
     /* componentWillUnmount(this.timerID) */
 
+    
+
     onCharLoaded = (char) => {
 
     if(!char.description) {char.description = 'Sorry! No info about this character.'}
