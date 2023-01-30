@@ -77,9 +77,7 @@ class RandomChar extends Component {
 
     render() {
 
-        console.log(this.state.char)
         const {char,loading,error} = this.state
-        
         const errorMessage = error ? <ErrorMessage/> : null;
         const spinner = loading ? <Spinner/> : null;
         const content = !(loading || error) ? <View char = {char}/> : null
@@ -120,9 +118,7 @@ const View = ({char}) => {
     
                 style = 'contain'
 
-                return style
-    
-                
+                return style   
             }
     }
     

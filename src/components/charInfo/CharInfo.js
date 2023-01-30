@@ -17,19 +17,24 @@ class CharInfo extends Component {
 
     marvelService = new MarvelService()
 
-    componentDidMount = () => {
+    componentDidMount() {
         this.updateChar()
         
     }
 
-    componentDidUpdate = (prevProps) => {
+    componentDidUpdate(prevProps) {
 
         if (this.props.charId !== prevProps.charId ) { 
             this.updateChar()
         }
     }
 
-   updateChar = () => {
+    componentDidCatch(err,info) {
+        console.log(err,info)
+        this.setState({error:true})
+    }
+
+    updateChar = () => {
 
     const {charId} = this.props
     if(!charId) {
@@ -84,10 +89,32 @@ const View = ({char}) => {
 
     const {name,description,wiki,thumbnail,comics} = char
 
+    const content = comics.length === 0 ? 'No comics about this character was found' : comics.slice(0,9).map((item,i)=>{
+                
+        return (
+            <li key = {i} className="char__comics-item">
+                {item.name}
+            </li>
+            )
+        });
+        
+        
+
+    const change = () => {
+        let style = ''
+        if (thumbnail === 
+            "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg" ) {
+    
+                style = 'contain'
+
+                return style   
+            }
+    }
+
     return (
     <>
     <div className="char__basics">
-                <img src={thumbnail} alt={name}/>
+                <img style = {{objectFit:change()}} src={thumbnail} alt={name}/>
                 <div>
                     <div className="char__info-name">{name}</div>
                     <div className="char__btns">
@@ -106,14 +133,7 @@ const View = ({char}) => {
             <div className="char__comics">Comics:</div>
             <ul className="char__comics-list">
 
-            {comics.slice(0,9).map((item,i)=>{
-                
-            return (
-                <li key = {i} className="char__comics-item">
-                    {item.name}
-                </li>
-                )
-            })} 
+            {content}
 
             </ul>
         </>

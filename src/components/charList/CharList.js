@@ -1,5 +1,4 @@
 import './charList.scss';
-import abyss from '../../resources/img/abyss.jpg';
 import { Component } from 'react';
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
@@ -11,7 +10,10 @@ class CharList extends Component {
     state = {
     chars: [],
     loading:true,
-    error:false
+    error:false,
+    newItemLoading:false,
+    offset:210,
+    charsEnded:false
     }
 
 
@@ -20,31 +22,56 @@ class CharList extends Component {
 
     componentDidMount() {
 
-        this.marvelService.getAllCharacters()
-        .then(res=>this.setState({chars:res}))
+        this.onRequest()
+        
+    }
+
+    onRequest = (offset) => {
+        this.onCharsListLoading()
+        this.marvelService.getAllCharacters(offset)
         .then(this.onCharsLoaded)
         .catch(this.onError)
         
-    
     }
 
+
     onError = () => {
-        this.setState({
-            loading:false,
-            error:true}
+        this.setState(
+        {
+        loading:false,
+        error:true
+        }
         )
     }
 
-    onCharsLoaded = () => {
+    onCharsLoaded = (newCharList) => {
 
-        this.setState({loading:false})
+        let ended = false
+        if (newCharList.length <9) {
+
+            ended = true
+        }
+
+        this.setState(({offset,chars})=>({
+            chars:[...chars,...newCharList],
+            loading:false,
+            newItemLoading:false,
+            offset:offset + 9,
+            charsEnded:ended
+            
+
+        }))  
     }
 
-
+    onCharsListLoading = () => {
+        this.setState({newItemLoading:true})
+    }
+    
+    
 
     render() {
 
-    const {chars,loading,error} = this.state
+    const {chars,loading,error,offset,newItemLoading,charsEnded} = this.state
 
     const contentChars = chars.map((item)=>{
     const {name,thumbnail} = item
@@ -69,7 +96,7 @@ class CharList extends Component {
     )
     });
 
-   
+
 
     const contentSpinners  = loading ? [...Array(8)].map((item,i)=>(
         <Spinner key={i}/>
@@ -82,8 +109,8 @@ class CharList extends Component {
     
     const contentToShow = !(loading || error) ? contentChars : null
 
-       
- 
+    const buttonContent = newItemLoading ? 'Wait...' : 'Load more'
+
     return (
 
         <div className="char__list">
@@ -92,8 +119,11 @@ class CharList extends Component {
             {contentSpinners}    
             {contentToShow}
             </ul>
-            <button className="button button__main button__long">
-                <div className="inner">load more</div>
+            <button onClick={() => this.onRequest(offset)} 
+                className="button button__main button__long"
+                disabled = {newItemLoading}
+                style ={{'display':charsEnded? 'none' : 'block'}}>
+                <div className="inner">{buttonContent}</div>
             </button>
         </div>
     )
